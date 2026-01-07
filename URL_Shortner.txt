@@ -59,4 +59,5 @@ Role of Load balancers :
 
     **Important point** 
 
-    Load balancers are used for stateless servers only.
+    Load balancers are mostly used for stateless servers.
+
