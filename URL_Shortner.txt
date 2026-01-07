@@ -1,0 +1,62 @@
+Overview : 
+    Today I had designed how URL shortner sites like 'https://tinyurl.com' works and how it handles millions of request at a time.
+
+Components Used : 
+
+    1. Load balancer
+    2. Redis 
+    3. MongoDB
+
+Workflow : 
+
+    case 1 : When user wants to create a URL 
+
+        1. User is expected to enter the URL that he/she wants to shortner.
+        2. We can create shorten URL using regix A-Z a-z 0-9 , so totally we have 62 characters , so we can create 2^62 combinations.
+        3. Now let's see how the actual website is redirected when we click the shorten URL.
+        4. We know that in database each records has their unique ID . For example the URL 'https://www.youtube.com/' has the id of 95 , convert 95 to base 62.
+        5. Divide the number by 62 and continue untill we have quotient = 0.
+
+        95/62 => quotient : 1 , remainder : 33
+        1/62 => quotient : 0 remainder : 1
+
+        the quotient becomes 0 , so stop the process. 
+
+        So we have remainders 1 and 33 , 
+
+        Let's assume 
+
+        Index = {
+            "0-9" : 0-9,
+            "a-z" : 10-35,
+            'A-Z' : 36-61
+        }
+
+        for 1 33 we will get 1x , so the shorten URL for 'https://www.youtube.com/' is 'tinyURL.com/1x'
+
+        
+        **Important point** 
+
+        There may be multiple users try to create a shorten URL for the same site , so before creating a shorten URL for a site , check whether it is present in the DB or not.
+
+
+    case 2: If user enters shorten URL 
+
+        1. When user enters shorten url , our job is to redirect to the actual site.
+        2. Before checking the DB directly , check the cache . If it is already present in cache , the retreival time will be reduced and load in the DB will be reduced.
+        
+        **Important point** 
+
+        In cache we store the frequently accessed sites.
+
+
+Role of Load balancers : 
+
+    Millions of users may try to shorten or access the shorten URL at a time , so we need to be cautious about that . Our server should be scalabe . 
+
+    Since our servers(instances) are stateless(in simple words , we are not storing any information in RAM) , we can use multiple servers and use 'Round Robin method' 
+    or someother methods to manage the traffic efficiently so that our app won't crash.
+
+    **Important point** 
+
+    Load balancers are used for stateless servers only.
