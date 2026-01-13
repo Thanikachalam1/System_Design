@@ -1,0 +1,29 @@
+Let's design how instagram's feed works
+
+Tech stack used : 
+
+    1. Load balancer - For distributing the traffic among the servers.
+    2. Redis - For storing the post ID of the followed person (used as feed box).
+    3. Kafka - For queing the post ID one by one and it ensures data is not lost.
+    4. Amazon S3 Object - For storing the large data.
+    5. Shared mySql server - To efficiently access the stored the media URL 
+    6. Content Delivery Network(CDN) - It restricts the API to hit S3 everytime.Instead it checks nearby servers and cache.
+
+
+When user Posts something : 
+
+    When user wants to Post something like photo or video , it hits the POST/ method and it generates a S3 URL which helps us to communicate
+    with S3 object.
+
+    After storing the data in Amazon S3 object , it generates a URL for that specific content .
+
+    That URL will be stored in a sharded mySql DB which also contains like counts and all other stuffs.
+
+    At meantime the Post ID has been queued to the Kafka to get stored in the follower's feed box (redis).
+
+
+When user opens Feed : 
+
+    When user opens Feed , the post ID has been fetched in batch wise (for pagination)from the redis(feed box).
+
+    Since we know the Post ID , we can directly refer the mySql database for URL of photo or video .
