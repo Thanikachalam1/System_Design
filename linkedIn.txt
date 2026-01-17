@@ -1,0 +1,36 @@
+Tech stack used : 
+    1. Load Balancer - For distributing the traffic among the servers.
+    2. Redis - For accessing the data faster.
+    3. graphQL - To scale accross multiple platforms.
+    4. noSQL - For storing the adjacency list of the graph(stores the ID).
+    5. mySql - For storing the actual data of the users.
+    6. Kafka - For sending the data from microservice 
+
+
+Process : 
+
+    In general , if two users are connected , then there will be a edge between the vertices(node ie user)
+    
+    We used graphQL API instead of REST API because REST API struggles with cross platform applications.
+
+    User1 -> User2 -> User3
+
+    Here User1 is connected with User2 and 
+    User2 is connected with User3
+
+    So User1 will get recommended to connect with User3 and vice verca.
+
+    The graph is represented as adjacency list and it is stored in noSQL database.
+
+    In noSQL database , we don't store the actual data of the user , we only store the IDs of the user and the actual data is stored in 
+    mySql database.
+
+    
+    First we check the redis cache , if it miss , then the database will be hitted and the data will be
+    stored in the redis and it is accessed via redis .
+
+    We get the adjacency list and all other data from microservice .
+
+
+
+    
