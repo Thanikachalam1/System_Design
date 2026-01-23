@@ -1,0 +1,22 @@
+Overview : 
+    Today I had designed BookMyShow system.
+
+Components Used : 
+    1. REST API : For sending request
+    2. Load Balancer : For distributing traffic accross the servers
+    3. Redis : For checking seat availability quickly
+    4. mySql(sharded accross regions) : For storing successful transactions , show timings etc
+    5. Kafka : Used as middleman between redis and microservice(sending successful message)
+    6. AWS lambda : Used as serverless microservice and it runs only it is called.
+
+Process : 
+    The process is very simple , when the user selects seats to book tickets , it will update the
+cache(where seat availability are stored) as booked for 5 minutes and the user will be redirected to
+the payment gateway.
+
+    After successful payment , it will be sent to queue to hit microservice(send successful message) 
+store the successful transaction in the DB.
+
+    If user fails to complete the payment , the seats will be again marked as available.
+
+
