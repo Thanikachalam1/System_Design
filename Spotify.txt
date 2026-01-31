@@ -1,0 +1,31 @@
+Functional Requirements : 
+    1. Users can be able to play songs seamlessly.
+    2. The recommendation should be based on past activities.
+    3. Subscription rules.
+    4. Fetch the metadata of the songs.
+
+Non Functional Requirements : 
+    1. Should handle millions of requests.
+    2. Should handle millions of concurrent plays.
+
+Main components used : 
+    1. Load Balancer : Handle the traffic distributing into multiple server instances
+    2. CDN : It acts as a cache 
+    3. BLOB storage : Best for storing data like images , videos , audio etc
+    4. NoSQL database : For storing the metadata of ads and music
+    5. Kafka : For sending the data from one microservice to another microservice
+
+Playback Feature : 
+    When user wants to play a song , it needs to hit the endpoint which is assigned for playbacks . 
+    Then the user is validated whether he/she holds an premium Subscription or not and whether it is a bot or not .
+
+    After successfull verification , the stream URL has been generated with some tokens with some time limitations and returned
+    to theuser.
+
+    Then again the user hit the CDN for that song , if the requested song is not present in the CDN (cache miss) , then CDN make 
+    a call to the origin (BLOB storage) and get the song and CDN returns the song to the user.
+
+
+ Recommendation : 
+    We get the user's data from microservice and it is evaluated in a certain interval of time like daily basis or 
+    weekly basis by the machine learning models.
