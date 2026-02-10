@@ -28,4 +28,11 @@ Process :
 
     Then the data will be sent to ranking and filteration process and the user gets the final result.
 
+
     Asynchronously the redis (cache) gets updated.
+
+Tradeoffs : 
+
+    Since we focused only on raw speed , there will high memory usage.
+
+    Can't get the most recent recommendations quickly
