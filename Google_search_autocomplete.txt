@@ -1,0 +1,31 @@
+Let's design Search Autocomplete Feature
+
+Things to note : 
+
+    The latency should be less than 100ms , so think of caching 
+
+Tech stack required : 
+    1. API Gateway - To implement features like rate limiting and TLS
+    2. Content Delivery Network(CDN) - Our All-rounder! It acts as edge cache and handles traffic routing 
+    3. Load Balancer - To distribute the traffic without crashing the server (microservice)
+    4. Microservice - To handle complex logics
+    5. Trie - A type of tree where the characters are represented as node . Ideal for Search Autocomplete.
+
+
+Process : 
+
+    When debouncing i.e user stops typing for a second , the API Gateway will be hit.
+
+    API Gateway ensures the data is encrypted by following Transaction Layer Security (TLS).
+
+    With the help of CDN we can check the edge cache and return if cache gets hitted.
+
+    Otherwise the traffic will be distributed among many instances with the help of Load Balancer.
+
+    Again it checks the Redis for the combination of word .
+
+    If cache gets missed , it reaches Trie which is also stored in main memory for fast reads.
+
+    Then the data will be sent to ranking and filteration process and the user gets the final result.
+
+    Asynchronously the redis (cache) gets updated.
