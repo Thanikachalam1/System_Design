@@ -1,0 +1,24 @@
+Overview :
+    Today I designed a Search Engine system that finds websites based on user search words.
+
+Components Used :
+
+    1. REST API – Takes search request from user
+    2. Load Balancer – Sends request to available servers
+    3. Search Servers – Process search queries
+    4. Redis – Stores frequently searched results
+    5. NoSQL DB (Index) – Stores word to document mapping
+    6. NoSQL DB (Metadata) – Stores website URLs and details
+    7. Web Crawler – Fetches websites continuously
+    8. Kafka – Sends crawler data to database
+
+Process : 
+
+    The web crawler tirelessly works 24/7 and fetches the URLs and reads the content in the website all over the internet.
+
+    And the data are stored as word and document_id pair . When we refer document_id in Metadata DB , we will get the actual 
+    site's URL and more details which will hepl the ML models to rank them.
+
+Tradeoffs : 
+
+    May miss the most recent data
