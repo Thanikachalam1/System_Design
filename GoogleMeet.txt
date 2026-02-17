@@ -1,0 +1,34 @@
+Overview
+    A real time video conferencing system where users join a meeting via a signaling backend, establish connectivity using ICE (STUN/TURN)
+Media is end-to-end encrypted on client devices and the backend only coordinates the connection and the media is handled by protocals
+
+
+Components Used
+
+Load Balancer – routes users to available signaling servers
+Signaling Servers – exchange SDP, candidates, session control (join/leave/mute)
+Cache (Redis) – store ICE configuration, room metadata, temporary session state
+STUN Servers – discover public IP and enable direct peer-to-peer connection
+TURN Servers – relay media when direct connection(P2P) fails
+WebRTC - capture, encode, encrypt, send and receive media
+DTLS + SRTP – secure key exchange and media encryption
+UDP Transport – low latency data packet delivery
+
+
+Process
+
+1. When user joins meeting request goes through Load Balancer to a signaling server
+2. Server returns ICE(Interactive Connectivity Establishment) configuration (STUN/TURN info) from cache
+3. Clients exchange SDP and ICE candidates via signaling
+4. ICE performs connectivity checks
+   i) If Direct path works , P2P via UDP
+   ii) If Fails, fallback to TURN relay
+5. After path selection, DTLS handshake generates encryption keys
+6. Audio/Video captured gets encoded and further encrypted using SRTP
+7. Media packets flow between peers (servers not involved in media)
+
+
+Trade-offs
+
+Scales well for 1:1 calls only
+TURN relay is expensive and slower compared to P2P
