@@ -1,0 +1,40 @@
+Overview
+    A realtime ride booking system where riders request trips and nearby drivers are matched instantly using location indexing. 
+The backend coordinates matching,notifications and payments while live driver locations stream continuously.
+
+Components Used
+
+    1. Load Balancer – routes rider/driver requests to available servers
+    2. API Gateway – entry point for all client requests
+    3. Matching Service – finds best nearby driver using geohash + ETA
+    4. Location Service – receives driver GPS updates
+    5. Redis – fast lookup of nearby drivers and temporary driver state
+    6. Database (NoSQL) – durable trip history and recovery
+    7. Notification Service – pushes live updates via WebSocket
+    8. Payment Service – charges rider after ride completion
+    
+
+Process
+
+    Driver app sends periodic GPS coordinates → API Gateway → Location Service
+
+    Location Service converts coordinates to geohash and updates Redis nearby driver index (and occasionally persists to database 
+    ensure durability)
+
+    Rider sends ride request → API Gateway → Trip Service
+
+    Matching Service reads nearby drivers from Redis (current cell and then neighbouring cells)
+
+    Matching Service filters available drivers and temporarily reserves one using Redis lock
+
+    Notification Service pushes assignment to rider & driver via WebSocket  
+
+    Driver continues sending live location updates → Location Service → Redis → pushed to rider via Notification Service
+
+    Trip Service calls Payment Service → Payment Gateway charges rider
+
+Trade-offs
+
+Geohash gives approximate location (not exact location)
+Complex system so hard to manage.
+Requires locking in redis to avoid assigning same driver to multiple riders.
